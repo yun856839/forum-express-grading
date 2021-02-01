@@ -7,7 +7,7 @@ app.engine('handlebars', handlebars())
 app.set('view engine', 'handlebars')
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Example app listening on port ${port}`)
 })
 
 require('./routes')(app)
