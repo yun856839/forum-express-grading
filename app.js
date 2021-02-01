@@ -6,6 +6,7 @@ const port = 3000
 
 app.engine('handlebars', handlebars())
 app.set('view engine', 'handlebars')
+app.use(express.urlencoded({ extended: true })) // body-parser
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
