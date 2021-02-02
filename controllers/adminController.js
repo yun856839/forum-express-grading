@@ -1,12 +1,29 @@
 const fs = require('fs')
 const db = require('../models')
 const Restaurant = db.Restaurant
+const User = db.User
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
-
-
 const adminController = {
+  getUsers: (req, res) => {
+    return User.findAll({ raw: true }).then(users => {
+      return res.render('admin/users', { users })
+    })
+  },
+
+  toggleAdmin: (req, res) => {
+    return User.findByPk(req.params.id).then((user) => {
+      user.update({
+        isAdmin: !user.isAdmin
+      })
+        .then((user) => {
+          req.flash('success_messages', `${user.name} was successfully to update`)
+          res.redirect('/admin/users')
+        })
+    })
+  },
+
   getRestaurants: (req, res) => {
     // {raw: true} 轉換成 JS 原生物件。
     return Restaurant.findAll({ raw: true }).then(restaurants => {
