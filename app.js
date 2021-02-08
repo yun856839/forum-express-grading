@@ -14,7 +14,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
-app.engine('handlebars', handlebars())
+app.engine('handlebars', handlebars({ helpers: require('./config/handlebars-helpers') }))
 app.set('view engine', 'handlebars')
 app.use(express.urlencoded({ extended: true })) // body-parser
 app.use(session({
