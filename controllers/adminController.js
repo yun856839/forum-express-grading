@@ -41,6 +41,11 @@ const adminController = {
       return res.redirect('back')
     }
 
+    if (isNaN(req.body.tel)) {
+      req.flash('error_messages', "tel is not number")
+      return res.redirect('back')
+    }
+
     const { file } = req
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID);
@@ -88,6 +93,11 @@ const adminController = {
   putRestaurant: (req, res) => {
     if (!req.body.name) {
       req.flash('error_messages', "name didn't exist")
+      return res.redirect('back')
+    }
+
+    if (isNaN(req.body.tel)) {
+      req.flash('error_messages', "tel is not number")
       return res.redirect('back')
     }
 
