@@ -1,3 +1,5 @@
+const momnet = require('moment')
+
 module.exports = {
   ifCond: function (a, b, options) {
     if (a === b) {
@@ -5,5 +7,9 @@ module.exports = {
     } else {
       return options.inverse(this);
     }
+  },
+
+  moment: function (a) {
+    return momnet(a).fromNow()
   }
 }
