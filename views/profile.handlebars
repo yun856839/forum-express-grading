@@ -1,0 +1,35 @@
+<div class="profile mt-5 d-flex">
+  <div class="user-picture" style="">
+    <img class="picture" style="border-radius: 50%;width: 300px;height:300px" src="
+    {{#if profile.image}}
+    {{profile.image}}
+    {{else}}
+    https://i.imgur.com/rRivrc6.jpg
+    {{/if}}
+    " alt="">
+  </div>
+
+  <div class="user-profile ml-3 p-3">
+    <h1>{{profile.name}}</h1>
+    <p>{{profile.email}}</p>
+
+    {{#ifCond user.id profile.id }}
+    <button type="button" class="btn btn-primary">
+      <a style="color: black;" href="/users/{{profile.id}}/edit">
+        Edit
+      </a>
+    </button>
+    {{/ifCond}}
+
+  </div>
+
+</div>
+
+<br />
+<br />
+
+<hr>
+
+<br />
+<br />
+<a href="javascript:history.back()">回上一頁</a>

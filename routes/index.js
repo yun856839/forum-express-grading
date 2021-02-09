@@ -26,6 +26,13 @@ module.exports = (app, passport) => {
     }
     res.redirect('/signin')
   }
+  const authenticatedProdile = (req, res, next) => {
+    if (helpers.getUser(req).id === Number(req.params.id)) {
+      return next()
+    }
+    req.flash('error_messages', 'can not change other\'s profile')
+    return res.redirect(`/users/${helpers.getUser(req).id}`)
+  }
 
   app.get('/', authenticated, (req, res) => res.redirect('/restaurants'))
   app.get('/restaurants', authenticated, restController.getRestaurants)
@@ -48,6 +55,10 @@ module.exports = (app, passport) => {
   app.get('/admin/categories/:id', authenticatedAdmin, categoryController.getCategories)
   app.put('/admin/categories/:id', authenticatedAdmin, categoryController.putCategory)
   app.delete('/admin/categories/:id', authenticatedAdmin, categoryController.deleteCategory)
+
+  app.get('/users/:id', authenticated, userController.getUser)
+  app.get('/users/:id/edit', authenticated, authenticatedProdile, userController.editUser)
+  app.put('/users/:id/edit', authenticated, upload.single('image'), userController.putUser)
 
   app.get('/admin/users', authenticatedAdmin, adminController.getUsers)
   app.put('/admin/users/:id/toggleAdmin', authenticatedAdmin, adminController.toggleAdmin)

@@ -1,8 +1,62 @@
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
+const fs = require('fs')
+const imgur = require('imgur')
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const userController = {
+  // 瀏覽 Profile
+  getUser: (req, res) => {
+    return User.findByPk(req.params.id).then(user => res.render('profile', { profile: user.toJSON() }))
+  },
+
+  // 瀏覽編輯 Profile 頁面
+  editUser: (req, res) => {
+    return User.findByPk(req.params.id).then(user => res.render('editProfile', { profile: user.toJSON() }))
+  },
+
+  // 編輯 Profile
+  putUser: (req, res) => {
+    if (!req.body.name) {
+      req.flash('error_messages', 'name didn\'t exist')
+      return res.redirect('back')
+    }
+
+    const { file } = req
+    if (file) {
+      imgur.setClientId(IMGUR_CLIENT_ID);
+      imgur.uploadFile(file.path)
+        .then(img => {
+          return User.findByPk(req.params.id)
+            .then(user => {
+              return user.update({
+                name: req.body.name,
+                image: img.data.link
+              })
+                .then((user) => {
+                  req.flash('success_messages', 'user profile was successfully update')
+                  return res.redirect(`/users/${req.params.id}`)
+                })
+            })
+        })
+        .catch(err => console.log(err))
+    } else {
+      return User.findByPk(req.params.id)
+        .then(user => {
+          return user.update({
+            name: req.body.name,
+            image: user.image
+          })
+            .then((user) => {
+              req.flash('success_messages', 'user profile was successfully update')
+              return res.redirect(`/users/${req.params.id}`)
+            })
+        })
+        .catch(err => console.log(err))
+    }
+  },
+
   // 註冊的頁面
   signUpPage: (req, res) => {
     return res.render('signup')
