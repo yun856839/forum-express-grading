@@ -16,7 +16,17 @@ const restController = {
         restaurants: data
       })
     })
-  }
+  },
+
+  getRestaurant: (req, res) => {
+    return Restaurant.findByPk(req.params.id, {
+      include: Category
+    }).then(restaurant => {
+      return res.render('restaurant', {
+        restaurant: restaurant.toJson()
+      })
+    })
+  },
 }
 
 module.exports = restController
