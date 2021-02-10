@@ -3,6 +3,10 @@ const Comment = db.Comment
 
 const commentController = {
   postComment: (req, res) => {
+    if (req.body.text.length > 100) {
+      req.flash('error_messages', 'Comment too large')
+      return res.redirect('back')
+    }
     return Comment.create({
       text: req.body.text,
       RestaurantId: req.body.restaurantId,

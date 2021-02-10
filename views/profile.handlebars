@@ -12,10 +12,11 @@
   <div class="user-profile ml-3 p-3">
     <h1>{{profile.name}}</h1>
     <p>{{profile.email}}</p>
+    <p>{{commentedRest}} 已評論餐廳</p>
 
     {{#ifCond user.id profile.id }}
     <button type="button" class="btn btn-primary">
-      <a style="color: black;" href="/users/{{profile.id}}/edit">
+      <a style="color: white;text-decoration:none;" href="/users/{{profile.id}}/edit">
         Edit
       </a>
     </button>
@@ -24,12 +25,30 @@
   </div>
 
 </div>
+<br />
+
+<hr>
+<h3>{{commentedRest}} 已評論餐廳</h3>
+<hr>
 
 <br />
+
+
+<div class="restPic d-flex flex-wrap">
+  {{#each profile.Comments}}
+  <div class="card m-3">
+    <a href="/restaurants/{{this.Restaurant.id}}"><img src="{{this.Restaurant.image}}"
+        style="height: 100px;width: 150px;"></a>
+  </div>
+  {{/each}}
+</div>
+
+
 <br />
 
 <hr>
 
 <br />
 <br />
+
 <a href="javascript:history.back()">回上一頁</a>

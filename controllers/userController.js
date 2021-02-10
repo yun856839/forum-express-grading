@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs')
 const db = require('../models')
+const Restaurant = db.Restaurant
+const Comment = db.Comment
 const User = db.User
 const fs = require('fs')
 const imgur = require('imgur')
@@ -8,7 +10,21 @@ const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const userController = {
   // 瀏覽 Profile
   getUser: (req, res) => {
-    return User.findByPk(req.params.id).then(user => res.render('profile', { profile: user.toJSON() }))
+    return User.findByPk(req.params.id, {
+      include: [
+        { model: Comment, include: [Restaurant] }
+      ]
+    }).then(user => {
+      if (!user) {
+        req.flash('error_messages', 'user doesn\'t exist')
+        return res.redirect('/restaurants')
+      }
+      commentedRest = user.toJSON().Comments.length || 0
+      return res.render('profile', {
+        profile: user.toJSON(),
+        commentedRest
+      })
+    })
   },
 
   // 瀏覽編輯 Profile 頁面
