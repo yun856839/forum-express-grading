@@ -50,16 +50,35 @@ const restController = {
   },
 
   getRestaurant: (req, res) => {
-    return Restaurant.findByPk(req.params.id, {
-      include: [
-        Category,
-        { model: Comment, include: [User] }
-      ]
-    }).then(restaurant => {
+    async function getRestaurant() {
+      let restaurant = await Restaurant.findByPk(req.params.id, {
+        include: [
+          Category,
+          { model: Comment, include: [User] }
+        ]
+      })
+      restaurant.viewCounts++
+      // console.log(restaurant.viewCounts)
+      restaurant.save()
       return res.render('restaurant', {
         restaurant: restaurant.toJSON()
       })
-    })
+    }
+    getRestaurant()
+
+    // return Restaurant.findByPk(req.params.id, {
+    //   include: [
+    //     Category,
+    //     { model: Comment, include: [User] }
+    //   ]
+    // }).then(restaurant => {
+    //   restaurant.viewCounts++
+    //   restaurant.save().then(restaurant => {
+    //     return res.render('restaurant', {
+    //       restaurant: restaurant.toJSON()
+    //     })
+    //   })
+    // })
   },
 
   getFeeds: (req, res) => {
