@@ -61,6 +61,52 @@ const restController = {
       })
     })
   },
+
+  getFeeds: (req, res) => {
+    async function getFeeds() {
+      let restaurants = await Restaurant.findAll({
+        limit: 10,
+        raw: true,
+        nest: true,
+        order: [['createdAt', 'DESC']],
+        include: [Category]
+      })
+      let comments = await Comment.findAll({
+        limit: 10,
+        raw: true,
+        nest: true,
+        order: [['createdAt', 'DESC']],
+        include: [User, Restaurant]
+      })
+      return res.render('feeds', {
+        restaurants,
+        comments
+      })
+    }
+    getFeeds()
+
+    //   return Promise.all([
+    //     Restaurant.findAll({
+    //       limit: 10,
+    //       raw: true,
+    //       nest: true,
+    //       order: [['createdAt', 'DESC']],
+    //       include: [Category]
+    //     }),
+    //     Comment.findAll({
+    //       limit: 10,
+    //       raw: true,
+    //       nest: true,
+    //       order: [['createdAt', 'DESC']],
+    //       include: [User, Restaurant]
+    //     })
+    //   ]).then(([restaurants, comments]) => {
+    //     return res.render('feeds', {
+    //       restaurants,
+    //       comments
+    //     })
+    //   })
+  }
 }
 
 module.exports = restController
