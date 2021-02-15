@@ -12,14 +12,14 @@
   <div class="user-profile ml-3 p-3">
     <h1>{{profile.name}}</h1>
     <p>{{profile.email}}</p>
-    <p>{{commentedRest}} 已評論餐廳</p>
+    <p>{{profile.Comments.length}} 已評論餐廳</p>
 
     {{#ifCond user.id profile.id }}
-    <button type="button" class="btn btn-primary">
-      <a style="color: white;text-decoration:none;" href="/users/{{profile.id}}/edit">
-        Edit
-      </a>
-    </button>
+
+    <a class="btn btn-primary" href="/users/{{profile.id}}/edit">
+      Edit
+    </a>
+
     {{/ifCond}}
 
   </div>

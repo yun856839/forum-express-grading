@@ -19,10 +19,8 @@ const userController = {
         req.flash('error_messages', 'user doesn\'t exist')
         return res.redirect('/restaurants')
       }
-      commentedRest = user.toJSON().Comments.length || 0
       return res.render('profile', {
-        profile: user.toJSON(),
-        commentedRest
+        profile: user.toJSON()
       })
     })
   },
