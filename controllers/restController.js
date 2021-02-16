@@ -8,6 +8,26 @@ const helpers = require('../_helpers')
 const pageLimit = 10 //一頁顯示 10 筆
 
 const restController = {
+  getTopRestaurants: (req, res) => {
+    return Restaurant.findAll({
+      include: [
+        { model: User, as: 'FavoritedUsers' }
+      ]
+    }).then(restaurants => {
+      restaurants = restaurants.map(restaurant => ({
+        ...restaurant.dataValues,
+        description: restaurant.description.length > 50 ? restaurant.description.substring(0, 50) : restaurant.description,
+        isFavorited: helpers.getUser(req).FavoritedRestaurants.map(favoritedRest => favoritedRest.id).includes(restaurant.id),
+        FavoritedCounts: restaurant.FavoritedUsers.length
+      }))
+      restaurants = restaurants.sort((a, b) => b.FavoritedCounts - a.FavoritedCounts).slice(0, 10)
+
+      return res.render('topRestaurants', {
+        restaurants
+      })
+    })
+  },
+
   getRestaurants: (req, res) => {
     const whereQuery = {}
     let categoryId = ''
