@@ -16,6 +16,9 @@ const userController = {
   getUser: (req, res) => {
     return User.findByPk(req.params.id, {
       include: [
+        { model: Restaurant, as: 'FavoritedRestaurants' },
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' },
         { model: Comment, include: [Restaurant] }
       ]
     }).then(user => {
@@ -23,8 +26,18 @@ const userController = {
         req.flash('error_messages', 'user doesn\'t exist')
         return res.redirect('/restaurants')
       }
+
+      const commentedRests = user.toJSON().Comments.map(comment => ({ ...comment.Restaurant }))
+
+      const set = new Set();
+      const noRepeatCommentRests = commentedRests.filter(item => !set.has(item.id) ? set.add(item.id) : false);
+      const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
+      // const isFollowed = helpers.getUser(req).Followings.map(d => d.id).includes(user.id)
+
       return res.render('profile', {
-        profile: user.toJSON()
+        profile: user.toJSON(),
+        noRepeatCommentRests,
+        isFollowed
       })
     })
   },
@@ -182,7 +195,8 @@ const userController = {
         // 新增 FollowerCount：計算追蹤者人數
         FollowerCount: user.Followers.length,
         // 判斷目前登入使用者是否已追蹤該 User
-        isFollowed: req.user.Followings.map(d => d.id).includes(user.id)
+        // isFollowed: req.user.Followings.map(d => d.id).includes(user.id)
+        isFollowed: req.user.Followings.some(d => d.id === user.id)
       }))
       // 依追蹤者人數排序
       users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)

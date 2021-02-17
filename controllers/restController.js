@@ -17,7 +17,8 @@ const restController = {
       restaurants = restaurants.map(restaurant => ({
         ...restaurant.dataValues,
         description: restaurant.description.length > 50 ? restaurant.description.substring(0, 50) : restaurant.description,
-        isFavorited: helpers.getUser(req).FavoritedRestaurants.map(favoritedRest => favoritedRest.id).includes(restaurant.id),
+        // isFavorited: helpers.getUser(req).FavoritedRestaurants.map(favoritedRest => favoritedRest.id).includes(restaurant.id),
+        isFavorited: helpers.getUser(req).FavoritedRestaurants.some(favoritedRest => favoritedRest.id === restaurant.id),
         FavoritedCounts: restaurant.FavoritedUsers.length
       }))
       restaurants = restaurants.sort((a, b) => b.FavoritedCounts - a.FavoritedCounts).slice(0, 10)
@@ -52,8 +53,10 @@ const restController = {
         ...r.dataValues,
         description: r.dataValues.description.substring(0, 50),
         categoryName: r.Category.name,
-        isFavorited: req.user.FavoritedRestaurants.map(d => d.id).includes(r.id),
-        isLiked: req.user.LikedRestaurants.map(d => d.id).includes(r.id)
+        // isFavorited: req.user.FavoritedRestaurants.map(d => d.id).includes(r.id),
+        // isLiked: req.user.LikedRestaurants.map(d => d.id).includes(r.id)
+        isFavorited: req.user.FavoritedRestaurants.some((item) => item.id === r.id),
+        isLiked: req.user.LikedRestaurants.some((item) => item.id === r.id)
       }))
       Category.findAll({
         raw: true,
@@ -85,8 +88,11 @@ const restController = {
       restaurant.viewCounts++
       restaurant.save()
 
-      const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(helpers.getUser(req).id)
-      const isLiked = restaurant.LikedUsers.map(d => d.id).includes(helpers.getUser(req).id)
+      const isFavorited = restaurant.FavoritedUsers.some(d => d.id === helpers.getUser(req).id)
+      const isLiked = restaurant.LikedUsers.some(d => d.id === helpers.getUser(req).id)
+
+      // const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(helpers.getUser(req).id)
+      // const isLiked = restaurant.LikedUsers.map(d => d.id).includes(helpers.getUser(req).id)
 
       return res.render('restaurant', {
         restaurant: restaurant.toJSON(),
