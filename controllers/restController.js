@@ -173,9 +173,10 @@ const restController = {
     return Restaurant.findByPk(req.params.id, {
       include: [
         Category,
+        { model: User, as: 'FavoritedUsers' },
         { model: Comment, include: [User] }
       ]
-    }).then(restaurant => {
+    }).then(restaurant => {      
       return res.render('dashboard', {
         restaurant: restaurant.toJSON()
       })
