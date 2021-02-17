@@ -2,7 +2,6 @@ const express = require('express')
 const handlebars = require('express-handlebars')
 const flash = require('connect-flash')
 const session = require('express-session')
-const db = require('./models')
 const passport = require('./config/passport')
 const methodOverride = require('method-override')
 const helpers = require('./_helpers')
@@ -17,6 +16,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.engine('handlebars', handlebars({ helpers: require('./config/handlebars-helpers') }))
 app.set('view engine', 'handlebars')
 app.use(express.urlencoded({ extended: true })) // body-parser
+app.use(express.json())
 app.use(session({
   secret: 'secret',
   resave: false,
