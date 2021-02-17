@@ -6,7 +6,6 @@ const User = db.User
 const Favorite = db.Favorite
 const Like = db.Like
 const Followship = db.Followship
-const fs = require('fs')
 const imgur = require('imgur')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const helpers = require('../_helpers')
@@ -55,26 +54,43 @@ const userController = {
     }
 
     const { file } = req
-    if (file) {
-      imgur.setClientId(IMGUR_CLIENT_ID);
-      imgur.uploadFile(file.path)
-        .then(img => {
-          return User.findByPk(req.params.id)
-            .then(user => {
+
+    // async function putUser() {
+    //   let user = await User.findByPk(req.params.id)
+    //   if (file) {
+    //     imgur.setClientId(IMGUR_CLIENT_ID);
+    //     let img = await imgur.uploadFile(file.path)
+    //     await user.update({
+    //       name: req.body.name,
+    //       image: img.data.link
+    //     })
+    //   } else {
+    //     await user.update({
+    //       name: req.body.name,
+    //       image: user.image
+    //     })
+    //   }
+    //   req.flash('success_messages', 'user profile was successfully update')
+    //   return res.redirect(`/users/${req.params.id}`)
+    // }
+    // putUser()
+
+    User.findByPk(req.params.id)
+      .then(user => {
+        if (file) {
+          imgur.setClientId(IMGUR_CLIENT_ID);
+          imgur.uploadFile(file.path)
+            .then((img) => {
               return user.update({
                 name: req.body.name,
                 image: img.data.link
+              }).then((user) => {
+                req.flash('success_messages', 'user profile was successfully update')
+                return res.redirect(`/users/${req.params.id}`)
               })
-                .then((user) => {
-                  req.flash('success_messages', 'user profile was successfully update')
-                  return res.redirect(`/users/${req.params.id}`)
-                })
             })
-        })
-        .catch(err => console.log(err))
-    } else {
-      return User.findByPk(req.params.id)
-        .then(user => {
+            .catch(err => console.log(err))
+        } else {
           return user.update({
             name: req.body.name,
             image: user.image
@@ -83,9 +99,9 @@ const userController = {
               req.flash('success_messages', 'user profile was successfully update')
               return res.redirect(`/users/${req.params.id}`)
             })
-        })
-        .catch(err => console.log(err))
-    }
+            .catch(err => console.log(err))
+        }
+      })
   },
 
   // 註冊的頁面
