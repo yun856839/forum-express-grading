@@ -19,7 +19,13 @@
   {{#each users}}
   <div class="col-3">
     <a href="/users/{{this.id}}">
-      <img class="" src="{{this.image}}" width="140px" height="140px">
+      <img class="" src="
+    {{#if this.image}}
+    {{this.image}}
+    {{else}}
+    https://i.imgur.com/rRivrc6.jpg
+    {{/if}}      
+    " width="140px" height="140px">
     </a>
     <h2>{{this.name}}</h2>
     <span class="badge badge-secondary">追蹤人數：{{this.FollowerCount}}</span>
