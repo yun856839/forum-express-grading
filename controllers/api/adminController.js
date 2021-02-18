@@ -29,5 +29,15 @@ const adminController = {
       return res.json(data)
     })
   },
+  getUsers: (req, res) => {
+    adminService.getUsers(req, res, (data) => {
+      return res.json(data)
+    })    
+  },
+  toggleAdmin: (req, res) => {
+    adminService.toggleAdmin(req, res, (data) => {
+      return res.json(data)
+    })    
+  },
 }
 module.exports = adminController

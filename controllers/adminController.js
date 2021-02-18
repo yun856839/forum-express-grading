@@ -9,21 +9,16 @@ const adminService = require('../services/adminService.js')
 
 const adminController = {
   getUsers: (req, res) => {
-    return User.findAll({ raw: true }).then(users => {
-      return res.render('admin/users', { users })
-    })
+    adminService.getUsers(req, res, (data) => {
+      return res.render('admin/users', data)
+    })    
   },
 
   toggleAdmin: (req, res) => {
-    return User.findByPk(req.params.id).then((user) => {
-      user.update({
-        isAdmin: !user.isAdmin
-      })
-        .then((user) => {
-          req.flash('success_messages', `${user.name} was successfully to update`)
-          res.redirect('/admin/users')
-        })
-    })
+    adminService.toggleAdmin(req, res, (data) => {
+      req.flash('success_messages', data['message'])
+      return res.redirect('/admin/users')
+    })    
   },
 
   getRestaurants: (req, res) => {

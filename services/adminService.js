@@ -3,6 +3,7 @@ const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const db = require('../models')
 const Category = db.Category
 const Restaurant = db.Restaurant
+const User = db.User
 
 const adminService = {
   getRestaurants: (req, res, callback) => {
@@ -118,6 +119,22 @@ const adminService = {
           })
         })
     }
+  },
+  getUsers: (req, res, callback) => {
+    return User.findAll({ raw: true }).then(users => {
+      callback({ users })      
+    })
+  },
+  // 後臺設定 user / admin
+  toggleAdmin: (req, res, callback) => {
+    return User.findByPk(req.params.id).then((user) => {
+      user.update({
+        isAdmin: !user.isAdmin
+      })
+        .then((user) => {
+          callback({ status: 'success', message: `${user.name} was successfully to update` })          
+        })
+    })
   },
 }
 
