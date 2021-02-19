@@ -1,27 +1,21 @@
-const db = require('../models')
-const Comment = db.Comment
+const commentService = require('../services/commentService.js')
 
-const commentController = {
+let commentController = {
   postComment: (req, res) => {
-    if (req.body.text.length > 100) {
-      req.flash('error_messages', 'Comment too large')
-      return res.redirect('back')
-    }
-    return Comment.create({
-      text: req.body.text,
-      RestaurantId: req.body.restaurantId,
-      UserId: req.user.id
-    }).then(comment => res.redirect(`/restaurants/${req.body.restaurantId}`))
+    commentService.postComment(req, res, (data) => {
+      if (data['status'] === 'error') {
+        req.flash('error_messages', data['message'])
+        return res.redirect('back')
+      }
+      req.flash('success_messages', data['message'])
+      return res.redirect(`/restaurants/${data['RestaurantId']}`)
+    })    
   },
 
   deleteComment: (req, res) => {
-    return Comment.findByPk(req.params.id)
-      .then((comment) => {
-        comment.destroy()
-          .then((comment) => {
-            res.redirect(`/restaurants/${comment.RestaurantId}`)
-          })
-      })
+    commentService.deleteComment(req, res, (data) => {
+      return res.redirect(`/restaurants/${data['RestaurantId']}`)
+    })    
   }
 }
 

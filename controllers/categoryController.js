@@ -1,6 +1,5 @@
-const db = require('../models')
 const categoryService = require('../services/categoryService')
-const Category = db.Category
+
 let categoryController = {
   getCategories: (req, res) => {
     categoryService.getCategories(req, res, (data) => {

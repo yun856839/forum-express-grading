@@ -31,7 +31,13 @@
   {{#each restaurants}}
   <div class="col-md-4">
     <div class="card mb-4 shadow-sm">
-      <img class="card-img-top" src="{{this.image}}" alt="Card image cap" width="286px" height="180px">
+      <img class="card-img-top" src="
+      {{#if this.image}}
+      {{this.image}}
+      {{else}}
+      https://i.imgur.com/WPcy3B6.jpeg
+      {{/if}}
+      " alt="Card image cap" width="286px" height="180px">
       <div class="card-body">
         <p class="card-text">
           <a href="/restaurants/{{this.id}}">

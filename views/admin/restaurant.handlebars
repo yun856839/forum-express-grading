@@ -5,7 +5,13 @@
   </div>
 
   <div class="col-md-4">
-    <img class="img-responsive center-block" src="{{restaurant.image}}" style="width: 250px;margin-bottom: 25px;">
+    <img class="img-responsive center-block" src="
+    {{#if restaurant.image}}
+    {{restaurant.image}}
+    {{else}}
+    https://i.imgur.com/WPcy3B6.jpeg
+    {{/if}}    
+    " style="width: 250px;margin-bottom: 25px;">
     <br>
     <div class="well">
       <ul class="list-unstyled">
