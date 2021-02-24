@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs')
 const db = require('../models')
 const Restaurant = db.Restaurant
 const Comment = db.Comment
@@ -11,7 +10,7 @@ const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const helpers = require('../_helpers')
 
 const userService = {
-  // 瀏覽 Profile
+  // 瀏覽 Profile  
   getUser: (req, res, callback) => {
     return User.findByPk(req.params.id, {
       include: [
@@ -25,10 +24,10 @@ const userService = {
       return callback({ status: 'error', message: 'user doesn\'t exist' })
       }
 
-      const commentedRests = user.toJSON().Comments.map(comment => ({ ...comment.Restaurant }))
+      const commentedRests = user.toJSON().Comments.map(comment => ({ ...comment.Restaurant }))      
 
       const set = new Set();
-      const noRepeatCommentRests = commentedRests.filter(item => !set.has(item.id) ? set.add(item.id) : false);
+      const noRepeatCommentRests = commentedRests.filter(item => !set.has(item.id) ? set.add(item.id) : false);      
       const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
       // const isFollowed = helpers.getUser(req).Followings.map(d => d.id).includes(user.id)
 
@@ -44,31 +43,28 @@ const userService = {
     return User.findByPk(req.params.id).then(user => callback({ profile: user.toJSON() }))
   },
   // 編輯 Profile
-  putUser: (req, res, callback) => {
+  putUser: async(req, res, callback) => {
     if (!req.body.name.trim()) {
       return callback({ status: 'error', message: 'name didn\'t exist' })
     }
 
-    const { file } = req
+    const { file } = req  
 
-    async function putUser() {
-      let user = await User.findByPk(req.params.id)
-      if (file) {
-        imgur.setClientId(IMGUR_CLIENT_ID);
-        let img = await imgur.uploadFile(file.path)
-        await user.update({
-          name: req.body.name,
-          image: img.data.link
-        })
-      } else {
-        await user.update({
-          name: req.body.name,
-          image: user.image
-        })
-      }
-      return callback({ status: 'success', message: 'user profile was successfully update', user })      
+    let user = await User.findByPk(req.params.id)
+    if (file) {
+      imgur.setClientId(IMGUR_CLIENT_ID);
+      let img = await imgur.uploadFile(file.path)
+      await user.update({
+        name: req.body.name,
+        image: img.data.link
+      })
+    } else {
+      await user.update({
+        name: req.body.name,
+        image: user.image
+      })
     }
-    putUser()
+    return callback({ status: 'success', message: 'user profile was successfully update', user })  
 
     // User.findByPk(req.params.id)
     //   .then(user => {

@@ -73,32 +73,26 @@ const restService = {
       })
     })
   },
-  getRestaurant: (req, res, callback) => {
-    async function getRestaurant() {
-      let restaurant = await Restaurant.findByPk(req.params.id, {
-        include: [
-          Category,
-          { model: User, as: 'LikedUsers' },
-          { model: User, as: 'FavoritedUsers' },
-          { model: Comment, include: [User] }
-        ]
-      })
-      restaurant.viewCounts++
-      restaurant.save()
+  getRestaurant: async(req, res, callback) => {     
+    let restaurant = await Restaurant.findByPk(req.params.id, {
+      include: [
+        Category,
+        { model: User, as: 'LikedUsers' },
+        { model: User, as: 'FavoritedUsers' },
+        { model: Comment, include: [User] }
+      ]
+    })
+    restaurant.viewCounts++
+    restaurant.save()
 
-      const isFavorited = restaurant.FavoritedUsers.some(d => d.id === helpers.getUser(req).id)
-      const isLiked = restaurant.LikedUsers.some(d => d.id === helpers.getUser(req).id)
+    const isFavorited = restaurant.FavoritedUsers.some(d => d.id === helpers.getUser(req).id)
+    const isLiked = restaurant.LikedUsers.some(d => d.id === helpers.getUser(req).id)     
 
-      // const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(helpers.getUser(req).id)
-      // const isLiked = restaurant.LikedUsers.map(d => d.id).includes(helpers.getUser(req).id)
-
-      return callback({
-        restaurant: restaurant.toJSON(),
-        isFavorited,
-        isLiked
-      })
-    }
-    getRestaurant()
+    return callback({
+      restaurant: restaurant.toJSON(),
+      isFavorited,
+      isLiked
+    })
 
     // return Restaurant.findByPk(req.params.id, {
     //   include: [
@@ -120,28 +114,26 @@ const restService = {
     //   })
     // })
   },
-  getFeeds: (req, res, callback) => {
-    async function getFeeds() {
-      let restaurants = await Restaurant.findAll({
-        limit: 10,
-        raw: true,
-        nest: true,
-        order: [['createdAt', 'DESC']],
-        include: [Category]
-      })
-      let comments = await Comment.findAll({
-        limit: 10,
-        raw: true,
-        nest: true,
-        order: [['createdAt', 'DESC']],
-        include: [User, Restaurant]
-      })
-      return callback({
-        restaurants,
-        comments
-      })
-    }
-    getFeeds()
+  getFeeds: async(req, res, callback) => {    
+    let restaurants = await Restaurant.findAll({
+      limit: 10,
+      raw: true,
+      nest: true,
+      order: [['createdAt', 'DESC']],
+      include: [Category]
+    })
+    let comments = await Comment.findAll({
+      limit: 10,
+      raw: true,
+      nest: true,
+      order: [['createdAt', 'DESC']],
+      include: [User, Restaurant]
+    })
+    return callback({
+      restaurants,
+      comments
+    })
+    
 
     //   return Promise.all([
     //     Restaurant.findAll({
