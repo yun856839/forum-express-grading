@@ -41,7 +41,7 @@ router.post('/following/:userId', authenticated, userController.addFollowing)
 router.delete('/following/:userId', authenticated, userController.removeFollowing)
 
 router.post('/comments', authenticated, commentController.postComment)
-router.delete('/comments/:id', authenticatedAdmin, commentController.deleteComment)
+router.delete('/comments/:id', authenticated, authenticatedAdmin, commentController.deleteComment)
 
 router.get('/admin', authenticated, authenticatedAdmin, (req, res) => res.redirect('/api/admin/restaurants'))
 router.get('/admin/restaurants', authenticated, authenticatedAdmin, adminController.getRestaurants)
